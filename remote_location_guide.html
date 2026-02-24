@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remote Location Best Practices</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #0D1117;
+    --navy: #161B22;
+    --mid: #21262D;
+    --border: #30363D;
+    --teal: #00B4D8;
+    --teal-dim: #0096B4;
+    --green: #3FB950;
+    --amber: #F0A500;
+    --red: #F85149;
+    --white: #FFFFFF;
+    --offwhite: #E6EDF3;
+    --muted: #8B949E;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--dark);
+    color: var(--offwhite);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 20px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  .header-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--teal);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+  }
+
+  header p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* ── NAV PILLS ── */
+  .nav-scroll {
+    display: flex;
+    gap: 8px;
+    padding: 12px 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 1px solid var(--border);
+    background: var(--dark);
+    position: sticky;
+    top: 89px;
+    z-index: 99;
+  }
+
+  .nav-scroll::-webkit-scrollbar { display: none; }
+
+  .nav-pill {
+    flex-shrink: 0;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--navy);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    font-family: 'IBM Plex Mono', monospace;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .nav-pill:hover, .nav-pill.active {
+    border-color: var(--teal);
+    color: var(--teal);
+    background: rgba(0,180,216,0.1);
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--teal);
+    color: var(--dark);
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+  }
+
+  .section h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .section-sub {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .card-accent {
+    border-left: 3px solid var(--teal);
+  }
+
+  .card-accent-green { border-left-color: var(--green); }
+  .card-accent-amber { border-left-color: var(--amber); }
+  .card-accent-red   { border-left-color: var(--red); }
+
+  /* ── SIGNAL FLOW ── */
+  .signal-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .signal-node {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+
+  .signal-node-header {
+    padding: 8px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--dark);
+  }
+
+  .signal-node-body {
+    background: var(--navy);
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .signal-node-body li {
+    font-size: 13px;
+    color: var(--offwhite);
+    line-height: 1.6;
+    list-style: none;
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .signal-node-body li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+  }
+
+  .signal-arrow {
+    text-align: center;
+    padding: 4px 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--teal);
+  }
+
+  /* ── CAM CARDS ── */
+  .cam-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  @media (max-width: 380px) { .cam-grid { grid-template-columns: 1fr; } }
+
+  .cam-card {
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .cam-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    padding: 5px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cam-card-body {
+    padding: 10px;
+  }
+
+  .cam-card-body h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .cam-card-body p {
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── TWO COLUMN ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media (max-width: 400px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+
+  /* ── DO/DON'T ── */
+  .do-col {
+    background: rgba(63,185,80,0.06);
+    border: 1px solid var(--green);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .dont-col {
+    background: rgba(248,81,73,0.06);
+    border: 1px solid var(--red);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .col-header {
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.08em;
+  }
+
+  .do-col .col-header { background: var(--green); color: var(--dark); }
+  .dont-col .col-header { background: var(--red); color: var(--white); }
+
+  .col-body { padding: 12px; }
+
+  .col-item { margin-bottom: 12px; }
+  .col-item:last-child { margin-bottom: 0; }
+
+  .col-item-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 2px;
+    line-height: 1.3;
+  }
+
+  .col-item-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── CHECK LISTS ── */
+  .checklist { list-style: none; }
+
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .checklist li:last-child { border-bottom: none; }
+
+  .check-icon {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .check-green { background: rgba(63,185,80,0.15); color: var(--green); border: 1px solid var(--green); }
+  .check-red   { background: rgba(248,81,73,0.15);  color: var(--red);   border: 1px solid var(--red); }
+  .check-amber { background: rgba(240,165,0,0.15);  color: var(--amber); border: 1px solid var(--amber); }
+
+  .check-text-title { font-weight: 600; color: var(--offwhite); }
+  .check-text-sub   { font-size: 11.5px; color: var(--muted); }
+
+  /* ── RANK BADGES ── */
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+    border: 1px solid;
+  }
+
+  .rank-best  { color: var(--green); border-color: var(--green); background: rgba(63,185,80,0.1); }
+  .rank-good  { color: var(--teal);  border-color: var(--teal);  background: rgba(0,180,216,0.1); }
+  .rank-ok    { color: var(--amber); border-color: var(--amber); background: rgba(240,165,0,0.1); }
+  .rank-avoid { color: var(--red);   border-color: var(--red);   background: rgba(248,81,73,0.1); }
+
+  /* ── NOTICE BOXES ── */
+  .notice {
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .notice-teal  { background: rgba(0,180,216,0.08);  border: 1px solid var(--teal);  color: var(--offwhite); }
+  .notice-amber { background: rgba(240,165,0,0.08);  border: 1px solid var(--amber); color: var(--offwhite); }
+  .notice-red   { background: rgba(248,81,73,0.08);  border: 1px solid var(--red);   color: var(--offwhite); }
+
+  .notice-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .notice strong { font-weight: 700; }
+
+  /* ── NAMED PARTICIPANTS ── */
+  .participant-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .participant-row:last-child { border-bottom: none; }
+
+  .participant-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .participant-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ── THREE COLS ── */
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  @media (min-width: 500px) {
+    .three-col { grid-template-columns: 1fr 1fr 1fr; }
+  }
+
+  /* ── STEPS ── */
+  .step-row {
+    display: flex;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .step-row:last-child { border-bottom: none; }
+
+  .step-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--teal);
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 2px;
+    width: 28px;
+  }
+
+  .step-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 3px;
+  }
+
+  .step-desc {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── QUICK REF GRID ── */
+  .ref-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media (max-width: 360px) { .ref-grid { grid-template-columns: 1fr; } }
+
+  .ref-card {
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .ref-card-header {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ref-card-icon { font-size: 14px; }
+
+  .ref-card-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .ref-top-border {
+    height: 3px;
+  }
+
+  .ref-card-body { padding: 10px 12px; }
+
+  .ref-card-body li {
+    font-size: 11.5px;
+    color: var(--offwhite);
+    line-height: 1.6;
+    list-style: none;
+    padding-left: 12px;
+    position: relative;
+  }
+
+  .ref-card-body li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--teal);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    font-style: italic;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  .teal { color: var(--teal); }
+  .amber { color: var(--amber); }
+  .green { color: var(--green); }
+  .red { color: var(--red); }
+  .muted { color: var(--muted); }
+  .bold { font-weight: 700; }
+
+  /* section headings with teal accent */
+  .section > h2 { padding-left: 12px; border-left: 3px solid var(--teal); }
+
+  /* ── EXPANDABLE TECH SECTIONS ── */
+  .expandable-toggle {
+    width:100%; background:var(--mid); border:1px solid var(--border);
+    border-radius:6px; padding:11px 14px; display:flex; justify-content:space-between;
+    align-items:center; cursor:pointer; margin-top:10px; color:var(--offwhite);
+    font-size:14px; font-weight:600; font-family:'IBM Plex Sans',sans-serif;
+  }
+  .expandable-toggle:hover { border-color: var(--teal); }
+  .toggle-arrow { font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--teal); transition:transform 0.2s; }
+  .expandable-toggle.open .toggle-arrow { transform: rotate(90deg); }
+  .expandable-content { display:none; margin-top:8px; }
+  .expandable-content.open { display:block; }
+  .expert-tag {
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600;
+    color:var(--teal); border:1px solid var(--teal); background:rgba(0,180,216,0.08);
+    padding:2px 7px; border-radius:3px; margin-right:8px; vertical-align:middle;
+  }
+  .tech-callout {
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--teal);
+    background:rgba(0,180,216,0.06); border:1px solid var(--border);
+    border-left:3px solid var(--teal); border-radius:0 6px 6px 0;
+    padding:11px 13px; line-height:1.85; margin-top:4px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-tag">Production Guide</div>
+  <h1>Remote Location<br>Best Practices</h1>
+  <p>Hybrid Stage + Field Integration via Zoom ISO</p>
+</header>
+
+<!-- NAV -->
+<nav class="nav-scroll">
+  <a class="nav-pill" href="#overview">Overview</a>
+  <a class="nav-pill" href="#cameras">Cameras</a>
+  <a class="nav-pill" href="#video">Video</a>
+  <a class="nav-pill" href="#audio">Audio</a>
+  <a class="nav-pill" href="#monitoring">Monitoring</a>
+  <a class="nav-pill" href="#eyeline">Eyeline</a>
+  <a class="nav-pill" href="#lighting">Lighting</a>
+  <a class="nav-pill" href="#zoom">Zoom ISO</a>
+  <a class="nav-pill" href="#quickref">Quick Ref</a>
+</nav>
+
+<!-- ═══ SECTION 1: OVERVIEW ═══ -->
+<section class="section" id="overview">
+  <div class="section-tag">System Overview</div>
+  <h2>How It All Connects</h2>
+  <p class="section-sub">Your feed travels from the field to the stage via Zoom ISO — here's the full signal chain</p>
+
+  <div class="signal-flow">
+    <div class="signal-node">
+      <div class="signal-node-header" style="background:var(--teal)">STAGE (VENUE)</div>
+      <div class="signal-node-body">
+        <ul>
+          <li>Presenter on stage</li>
+          <li>Speaker mic → Zoom audio out</li>
+          <li>Downstage monitors (IEM / wedge)</li>
+          <li>LED wall displays remote feed</li>
+          <li>TD / Engineer at FOH</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="signal-arrow">↕ Zoom ISO ↕</div>
+
+    <div class="signal-node">
+      <div class="signal-node-header" style="background:var(--green)">ZOOM CLOUD</div>
+      <div class="signal-node-body">
+        <ul>
+          <li>Transport medium</li>
+          <li>ISO recording per source</li>
+          <li>H.264 / 720p or 1080p</li>
+          <li>Latency: ~100–500ms</li>
+          <li>Audio: 48kHz stereo</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="signal-arrow">↕ Zoom ISO ↕</div>
+
+    <div class="signal-node">
+      <div class="signal-node-header" style="background:var(--amber)">REMOTE LOCATION</div>
+      <div class="signal-node-body">
+        <ul>
+          <li>Lab / HQ / Field site</li>
+          <li>2–4 camera angles</li>
+          <li>Presenter mic</li>
+          <li>IFB / earbud monitoring</li>
+          <li>PC or Mac per camera</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice notice-teal">
+    <span class="notice-icon">💡</span>
+    <div><strong>Key principle:</strong> Each camera angle joins Zoom as a separate participant with its own dedicated computer. This gives the production team individual ISO feeds for clean switching and post-production flexibility.</div>
+  </div>
+
+  <button class="expandable-toggle" onclick="toggle(this)">
+    <span><span class="expert-tag">TECH</span> Network configuration and firewall requirements</span>
+    <span class="toggle-arrow">▶</span>
+  </button>
+  <div class="expandable-content">
+    <div class="tech-callout">
+Zoom uses UDP for media streams — some corporate firewalls block UDP or rate-limit it, causing choppy video and audio that's nearly impossible to diagnose without knowing this.<br><br>
+Required open ports: UDP 3478, 3479, 8801–8802. TCP 443 as fallback (Zoom auto-downgrades to TCP if UDP is blocked, but quality degrades).<br><br>
+Bandwidth requirements per computer: 1080p30 upload requires minimum 3 Mbps sustained. Plan for 10 Mbps per machine with headroom for burst. On a 4-camera setup: minimum 40 Mbps upload at the remote location — test this specifically, not just headline ISP speed.<br><br>
+QoS: if the venue has a managed network, request that UDP traffic be prioritized (DSCP marking EF / Expedited Forwarding). A QoS policy that deprioritizes Zoom traffic in favor of other hotel systems will cause dropout even on a nominally fast connection.<br><br>
+VPN: if the presenter's computer has a VPN active, disable it for the duration of the show. Most VPNs route all traffic through a single tunnel, adding latency and often capping bandwidth. Corporate laptops may re-enable VPN automatically — confirm it's off immediately before going live.
+    </div>
+  </div>
+
+  <button class="expandable-toggle" onclick="toggle(this)" style="margin-top:12px">
+    <span><span class="expert-tag">VISUAL</span> End-to-end signal path — remote to LED wall</span>
+    <span class="toggle-arrow">▶</span>
+  </button>
+  <div class="expandable-content">
+    <svg viewBox="0 0 320 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:320px;display:block;margin:8px auto;font-family:'IBM Plex Mono',monospace;">
+      <defs>
+        <marker id="parr" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L0,7 L7,3.5 z" fill="#00B4D8"/></marker>
+        <marker id="yarr" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L0,7 L7,3.5 z" fill="#F0A500"/></marker>
+      </defs>
+      <rect width="320" height="380" rx="8" fill="#18160C" stroke="#363318"/>
+      <text x="160" y="15" text-anchor="middle" fill="#B8AD8A" font-size="9" letter-spacing="1">END-TO-END: REMOTE LOCATION → VENUE</text>
+
+      <!-- ═══ REMOTE LOCATION SIDE ═══ -->
+      <rect x="10" y="24" width="130" height="16" rx="3" fill="#0a1a2a" stroke="#00B4D8" stroke-width="1"/>
+      <text x="75" y="35" text-anchor="middle" fill="#00B4D8" font-size="8" font-weight="bold" letter-spacing="1">REMOTE LOCATION</text>
+
+      <!-- Camera -->
+      <rect x="18" y="46" width="50" height="30" rx="4" fill="#1a2030" stroke="#00B4D8" stroke-width="1"/>
+      <text x="43" y="59" text-anchor="middle" fill="#F0EAD6" font-size="8" font-weight="bold">Camera</text>
+      <text x="43" y="70" text-anchor="middle" fill="#B8AD8A" font-size="7">HDMI out</text>
+
+      <!-- Capture card -->
+      <rect x="80" y="46" width="52" height="30" rx="4" fill="#1a2030" stroke="#00B4D8" stroke-width="1"/>
+      <text x="106" y="59" text-anchor="middle" fill="#F0EAD6" font-size="8" font-weight="bold">Capture</text>
+      <text x="106" y="70" text-anchor="middle" fill="#F0EAD6" font-size="8" font-weight="bold">Card</text>
+      <line x1="68" y1="61" x2="80" y2="61" stroke="#00B4D8" stroke-width="1.5" marker-end="url(#parr)"/>
+
+      <!-- Computer -->
+      <rect x="18" y="90" width="114" height="30" rx="4" fill="#1a2030" stroke="#00B4D8" stroke-width="1.5"/>
+      <text x="75" y="103" text-anchor="middle" fill="#F0EAD6" font-size="9" font-weight="bold">Computer</text>
+      <text x="75" y="114" text-anchor="middle" fill="#B8AD8A" font-size="7">Zoom client · REMOTE-CAM1-WIDE</text>
+      <line x1="106" y1="76" x2="75" y2="90" stroke="#00B4D8" stroke-width="1" stroke-dasharray="2,2"/>
+
+      <!-- Mic / audio interface -->
+      <rect x="18" y="134" width="114" height="24" rx="4" fill="#1a2030" stroke="#00B4D8" stroke-width="1"/>
+      <text x="75" y="144" text-anchor="middle" fill="#F0EAD6" font-size="8" font-weight="bold">Mic + Audio Interface</text>
+      <text x="75" y="154" text-anchor="middle" fill="#B8AD8A" font-size="7">REMOTE-CAM2-MED (audio live)</text>
+
+      <!-- ethernet -->
+      <rect x="18" y="170" width="114" height="22" rx="4" fill="#1a2030" stroke="#3FB950" stroke-width="1.5"/>
+      <text x="75" y="185" text-anchor="middle" fill="#3FB950" font-size="8" font-weight="bold">Wired Ethernet — 10 Mbps+ up</text>
+
+      <!-- ═══ INTERNET CLOUD ═══ -->
+      <ellipse cx="160" cy="215" rx="38" ry="26" fill="#0a0a18" stroke="#363318" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="160" y="211" text-anchor="middle" fill="#B8AD8A" font-size="8">internet</text>
+      <text x="160" y="223" text-anchor="middle" fill="#363318" font-size="7">Zoom cloud</text>
+
+      <!-- Arrow: remote → internet -->
+      <line x1="132" y1="181" x2="132" y2="200" stroke="#00B4D8" stroke-width="1.5" marker-end="url(#parr)"/>
+      <path d="M132,200 Q145,215 122,215" fill="none" stroke="#00B4D8" stroke-width="1.5" marker-end="url(#parr)"/>
+
+      <!-- Arrow: internet → venue -->
+      <path d="M198,215 Q210,215 188,215" fill="none" stroke="#F0A500" stroke-width="1.5"/>
+      <line x1="188" y1="200" x2="188" y2="181" stroke="#F0A500" stroke-width="1.5" marker-end="url(#yarr)"/>
+
+      <!-- ═══ VENUE SIDE ═══ -->
+      <rect x="178" y="24" width="132" height="16" rx="3" fill="#1a1000" stroke="#F0A500" stroke-width="1"/>
+      <text x="244" y="35" text-anchor="middle" fill="#F0A500" font-size="8" font-weight="bold" letter-spacing="1">VENUE</text>
+
+      <!-- Venue computer receiving Zoom -->
+      <rect x="186" y="46" width="116" height="30" rx="4" fill="#1a1000" stroke="#F0A500" stroke-width="1.5"/>
+      <text x="244" y="59" text-anchor="middle" fill="#F0EAD6" font-size="9" font-weight="bold">Show Computer</text>
+      <text x="244" y="70" text-anchor="middle" fill="#B8AD8A" font-size="7">Zoom receiver · HDMI out</text>
+
+      <!-- Vertical connector line on venue side -->
+      <line x1="188" y1="181" x2="188" y2="76" stroke="#F0A500" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <line x1="188" y1="76" x2="186" y2="76" stroke="#F0A500" stroke-width="1.5" marker-end="url(#yarr)"/>
+
+      <!-- ATEM Switcher -->
+      <rect x="186" y="90" width="116" height="30" rx="4" fill="#1a1000" stroke="#F0A500" stroke-width="1.5"/>
+      <text x="244" y="103" text-anchor="middle" fill="#F0EAD6" font-size="9" font-weight="bold">ATEM Switcher</text>
+      <text x="244" y="114" text-anchor="middle" fill="#B8AD8A" font-size="7">SLIDES-REMOTE-CAM input</text>
+      <line x1="244" y1="76" x2="244" y2="90" stroke="#F0A500" stroke-width="1.5" marker-end="url(#yarr)"/>
+
+      <!-- LED wall processor -->
+      <rect x="186" y="134" width="116" height="24" rx="4" fill="#1a1000" stroke="#F0A500" stroke-width="1.5"/>
+      <text x="244" y="144" text-anchor="middle" fill="#F0EAD6" font-size="8" font-weight="bold">LED Wall Processor</text>
+      <text x="244" y="154" text-anchor="middle" fill="#B8AD8A" font-size="7">scales to wall native res</text>
+      <line x1="244" y1="120" x2="244" y2="134" stroke="#F0A500" stroke-width="1.5" marker-end="url(#yarr)"/>
+
+      <!-- LED wall -->
+      <rect x="186" y="170" width="116" height="22" rx="4" fill="#2a1500" stroke="#F0A500" stroke-width="2"/>
+      <text x="244" y="185" text-anchor="middle" fill="#F0A500" font-size="9" font-weight="bold">LED WALL</text>
+      <line x1="244" y1="158" x2="244" y2="170" stroke="#F0A500" stroke-width="1.5" marker-end="url(#yarr)"/>
+
+      <!-- ISO note -->
+      <rect x="10" y="208" width="130" height="36" rx="4" fill="#0E0D08" stroke="#363318"/>
+      <text x="75" y="221" text-anchor="middle" fill="#B8AD8A" font-size="8" font-weight="bold">EACH CAMERA =</text>
+      <text x="75" y="233" text-anchor="middle" fill="#00B4D8" font-size="8">Separate Zoom participant</text>
+      <text x="75" y="243" text-anchor="middle" fill="#00B4D8" font-size="8">= Individual ISO track</text>
+
+      <!-- Latency note -->
+      <rect x="10" y="252" width="300" height="40" rx="4" fill="#0E0D08" stroke="#363318"/>
+      <text x="160" y="266" text-anchor="middle" fill="#B8AD8A" font-size="8" font-weight="bold">LATENCY</text>
+      <text x="160" y="279" text-anchor="middle" fill="#B8AD8A" font-size="8">Zoom adds ~150–500ms of delay to remote feeds.</text>
+      <text x="160" y="290" text-anchor="middle" fill="#F85149" font-size="8">Test latency before live Q&amp;A — remote presenter will</text>
+      <text x="75" y="290" fill="#F85149" font-size="8"> </text>
+
+      <!-- IFB return path -->
+      <rect x="10" y="300" width="300" height="70" rx="4" fill="#0E0D08" stroke="#00B4D8" stroke-width="0.8"/>
+      <text x="160" y="315" text-anchor="middle" fill="#00B4D8" font-size="8" font-weight="bold">IFB RETURN PATH (opposite direction)</text>
+      <text x="25" y="330" fill="#F0EAD6" font-size="8">FOH mix</text>
+      <line x1="75" y1="327" x2="95" y2="327" stroke="#00B4D8" stroke-width="1.5" marker-end="url(#parr)"/>
+      <text x="105" y="330" fill="#F0EAD6" font-size="8">Zoom</text>
+      <line x1="125" y1="327" x2="145" y2="327" stroke="#00B4D8" stroke-width="1.5" marker-end="url(#parr)"/>
+      <text x="155" y="330" fill="#F0EAD6" font-size="8">internet</text>
+      <line x1="193" y1="327" x2="213" y2="327" stroke="#00B4D8" stroke-width="1.5" marker-end="url(#parr)"/>
+      <text x="220" y="330" fill="#F0EAD6" font-size="8">remote</text>
+      <line x1="254" y1="327" x2="274" y2="327" stroke="#00B4D8" stroke-width="1.5" marker-end="url(#parr)"/>
+      <text x="277" y="330" fill="#F0EAD6" font-size="8">ear</text>
+      <text x="160" y="348" text-anchor="middle" fill="#B8AD8A" font-size="7">Remote presenter hears stage through this return path</text>
+      <text x="160" y="360" text-anchor="middle" fill="#F85149" font-size="7">Latency on IFB makes live Q&amp;A feel unnatural — brief presenter before show</text>
+    </svg>
+  </div>
+
+
+</section>
+
+<!-- ═══ SECTION 2: CAMERAS ═══ -->
+<section class="section" id="cameras">
+  <div class="section-tag">Cameras</div>
+  <h2>Camera Positions</h2>
+  <p class="section-sub">Recommended angles to give the production team flexible cutting options</p>
+
+  <div class="cam-grid">
+    <div class="cam-card">
+      <div class="cam-label" style="color:var(--teal); border-bottom-color:var(--border)">CAM 1</div>
+      <div class="cam-card-body">
+        <h3>Wide / Establishing</h3>
+        <p>Full space + presenter in frame. Shows context — the lab, field site. Use a tripod. This is your safety shot.</p>
+      </div>
+    </div>
+    <div class="cam-card">
+      <div class="cam-label" style="color:var(--teal-dim); border-bottom-color:var(--border)">CAM 2</div>
+      <div class="cam-card-body">
+        <h3>Medium / Presenter</h3>
+        <p>Chest-to-head framing. Primary talking-head shot. Slightly off-center — leaves room for lower thirds.</p>
+      </div>
+    </div>
+    <div class="cam-card">
+      <div class="cam-label" style="color:var(--amber); border-bottom-color:var(--border)">CAM 3</div>
+      <div class="cam-card-body">
+        <h3>Insert / Detail</h3>
+        <p>Close-up of the subject: equipment, specimens, screens. Allows the stage presenter to reference specific items.</p>
+      </div>
+    </div>
+    <div class="cam-card">
+      <div class="cam-label" style="color:var(--muted); border-bottom-color:var(--border)">CAM 4</div>
+      <div class="cam-card-body">
+        <h3>Reaction / Environment</h3>
+        <p>Optional. Secondary person or roving shot. Pre-agree with production team. No surprise framing changes.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice notice-amber" style="margin-top:14px">
+    <span class="notice-icon">⚠️</span>
+    <div><strong>Each camera = one dedicated computer + one Zoom account.</strong> Do not share accounts between cameras.</div>
+  </div>
+
+  <button class="expandable-toggle" onclick="toggle(this)" style="margin-top:12px">
+    <span><span class="expert-tag">VISUAL</span> Camera angles — top-down room diagram</span>
+    <span class="toggle-arrow">▶</span>
+  </button>
+  <div class="expandable-content">
+    <svg viewBox="0 0 320 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:320px;display:block;margin:8px auto;font-family:'IBM Plex Mono',monospace;">
+      <defs>
+        <marker id="carr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#B8AD8A"/></marker>
+      </defs>
+      <rect width="320" height="300" rx="8" fill="#18160C" stroke="#363318"/>
+      <text x="160" y="14" text-anchor="middle" fill="#B8AD8A" font-size="9" letter-spacing="1">CAMERA POSITIONS — TOP-DOWN</text>
+
+      <!-- Background / backdrop -->
+      <rect x="60" y="24" width="200" height="28" rx="3" fill="#1a1a10" stroke="#363318" stroke-width="1.5"/>
+      <text x="160" y="42" text-anchor="middle" fill="#363318" font-size="9">BACKGROUND / BACKDROP</text>
+
+      <!-- Presenter -->
+      <ellipse cx="160" cy="110" rx="18" ry="22" fill="#242110" stroke="#F0A500" stroke-width="2"/>
+      <text x="160" y="106" text-anchor="middle" fill="#F0EAD6" font-size="8" font-weight="bold">PRES</text>
+      <text x="160" y="118" text-anchor="middle" fill="#F0EAD6" font-size="7">presenter</text>
+
+      <!-- CAMERA 1: Wide — far back center -->
+      <rect x="136" y="218" width="48" height="28" rx="3" fill="#1a2030" stroke="#00B4D8" stroke-width="1.5"/>
+      <text x="160" y="230" text-anchor="middle" fill="#00B4D8" font-size="7" font-weight="bold">CAM 1</text>
+      <text x="160" y="241" text-anchor="middle" fill="#00B4D8" font-size="7">WIDE</text>
+      <!-- FOV cone -->
+      <path d="M160,218 L100,110 L220,110 Z" fill="rgba(0,180,216,0.06)" stroke="none"/>
+      <line x1="160" y1="218" x2="100" y2="132" stroke="#00B4D8" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.4"/>
+      <line x1="160" y1="218" x2="220" y2="132" stroke="#00B4D8" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.4"/>
+      <line x1="160" y1="218" x2="160" y2="132" stroke="#00B4D8" stroke-width="1" marker-end="url(#carr)"/>
+
+      <!-- CAMERA 2: Medium — center, closer -->
+      <rect x="136" y="175" width="48" height="28" rx="3" fill="#1a2030" stroke="#3FB950" stroke-width="1.5"/>
+      <text x="160" y="187" text-anchor="middle" fill="#3FB950" font-size="7" font-weight="bold">CAM 2</text>
+      <text x="160" y="198" text-anchor="middle" fill="#3FB950" font-size="7">MED + MIC</text>
+      <!-- Narrower FOV -->
+      <path d="M160,175 L130,110 L190,110 Z" fill="rgba(63,185,80,0.08)" stroke="none"/>
+      <line x1="160" y1="175" x2="160" y2="132" stroke="#3FB950" stroke-width="1" marker-end="url(#carr)"/>
+
+      <!-- CAMERA 3: Insert — tight, to one side -->
+      <rect x="226" y="120" width="50" height="28" rx="3" fill="#1a2030" stroke="#F0A500" stroke-width="1.5"/>
+      <text x="251" y="132" text-anchor="middle" fill="#F0A500" font-size="7" font-weight="bold">CAM 3</text>
+      <text x="251" y="143" text-anchor="middle" fill="#F0A500" font-size="7">INSERT</text>
+      <!-- Tight FOV toward presenter hands/desk -->
+      <line x1="226" y1="134" x2="185" y2="116" stroke="#F0A500" stroke-width="1" marker-end="url(#carr)"/>
+      <path d="M226,134 L185,108 L185,124 Z" fill="rgba(240,165,0,0.08)" stroke="none"/>
+
+      <!-- CAMERA 4: Environment — wide side angle -->
+      <rect x="42" y="80" width="50" height="28" rx="3" fill="#1a2030" stroke="#BC8CFF" stroke-width="1.5"/>
+      <text x="67" y="92" text-anchor="middle" fill="#BC8CFF" font-size="7" font-weight="bold">CAM 4</text>
+      <text x="67" y="103" text-anchor="middle" fill="#BC8CFF" font-size="7">ENV / ROOM</text>
+      <!-- Wide side angle -->
+      <line x1="92" y1="94" x2="142" y2="110" stroke="#BC8CFF" stroke-width="1" marker-end="url(#carr)"/>
+
+      <!-- Each cam = one computer label -->
+      <rect x="8" y="254" width="304" height="38" rx="4" fill="#0E0D08" stroke="#363318"/>
+      <text x="160" y="268" text-anchor="middle" fill="#B8AD8A" font-size="8" font-weight="bold">EACH CAMERA = ONE DEDICATED COMPUTER + ONE ZOOM ACCOUNT</text>
+      <text x="160" y="282" text-anchor="middle" fill="#00B4D8" font-size="8">CAM 1 (muted) · CAM 2 (mic live) · CAM 3 (muted) · CAM 4 (muted)</text>
+    </svg>
+  </div>
+
+</section>
+
+<!-- ═══ SECTION 3: VIDEO SETTINGS ═══ -->
+<section class="section" id="video">
+  <div class="section-tag">Video Settings</div>
+  <h2>Zoom Video Config</h2>
+  <p class="section-sub">Set in Zoom → Settings → Video before the call</p>
+
+  <div class="card card-accent card-accent-green" style="margin-bottom:14px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:var(--green); letter-spacing:0.1em; margin-bottom:10px">REQUIRED SETTINGS</div>
+    <ul class="checklist">
+      <li>
+        <div class="check-icon check-green">✓</div>
+        <div><div class="check-text-title">Resolution: 1080p HD</div><div class="check-text-sub">Enable HD in Zoom settings — it's off by default</div></div>
+      </li>
+      <li>
+        <div class="check-icon check-green">✓</div>
+        <div><div class="check-text-title">Frame Rate: 30fps</div><div class="check-text-sub">Do not use 24fps — causes motion judder on LED walls</div></div>
+      </li>
+      <li>
+        <div class="check-icon check-green">✓</div>
+        <div><div class="check-text-title">Correct Camera Input</div><div class="check-text-sub">Set to your physical camera, not the built-in webcam</div></div>
+      </li>
+      <li>
+        <div class="check-icon check-green">✓</div>
+        <div><div class="check-text-title">Mirror: Off</div><div class="check-text-sub">Disable "Mirror my video" — it flips text in frame</div></div>
+      </li>
+      <li>
+        <div class="check-icon check-green">✓</div>
+        <div><div class="check-text-title">Original Ratio: 16:9</div><div class="check-text-sub">Disable "Crop to fill" — keep native aspect ratio</div></div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card card-accent card-accent-red">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:var(--red); letter-spacing:0.1em; margin-bottom:10px">AVOID</div>
+    <ul class="checklist">
+      <li>
+        <div class="check-icon check-red">✕</div>
+        <div><div class="check-text-title">Virtual Backgrounds</div><div class="check-text-sub">Creates edge artifacts and compression noise</div></div>
+      </li>
+      <li>
+        <div class="check-icon check-red">✕</div>
+        <div><div class="check-text-title">Beauty / Touch Up Filter</div><div class="check-text-sub">Softens image, reduces detail — disable all filters</div></div>
+      </li>
+      <li>
+        <div class="check-icon check-amber">!</div>
+        <div><div class="check-text-title">Zoom AI Noise Removal</div><div class="check-text-sub">Can cause audio artifacts — use hardware noise reduction instead</div></div>
+      </li>
+      <li>
+        <div class="check-icon check-amber">!</div>
+        <div><div class="check-text-title">Low-Light Enhancement</div><div class="check-text-sub">Adds noise and flicker — fix with proper lighting instead</div></div>
+      </li>
+      <li>
+        <div class="check-icon check-red">✕</div>
+        <div><div class="check-text-title">Screen Share as Camera</div><div class="check-text-sub">Causes instability — use a dedicated capture device</div></div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="notice notice-teal">
+    <span class="notice-icon">🔌</span>
+    <div><strong>Network:</strong> Wired ethernet required. WiFi is not acceptable for production. Minimum <strong>10 Mbps upload per computer</strong>. Test 24 hours before the event.</div>
+  </div>
+
+  <button class="expandable-toggle" onclick="toggle(this)">
+    <span><span class="expert-tag">TECH</span> Connecting a broadcast camera via capture card</span>
+    <span class="toggle-arrow">▶</span>
+  </button>
+  <div class="expandable-content">
+    <div class="tech-callout">
+For broadcast or prosumer cameras (Sony, Canon, Blackmagic, Panasonic PTZ), use a capture card to bring the HDMI or SDI signal into the computer as a virtual USB camera device.<br><br>
+Recommended capture cards: Elgato Cam Link 4K · Blackmagic UltraStudio · Magewell USB Capture HDMI<br><br>
+Set the camera output to 1080p30 and enable clean HDMI output — disable all on-screen overlays (focus peaking, zebras, histogram, battery indicators) before they reach the output signal. Zoom will capture these as part of the image.<br><br>
+If the camera outputs 1080i (interlaced): confirm the capture card deinterlaces to 1080p before passing to Zoom. Interlaced video over Zoom creates comb artifacts on any fast movement in frame.<br><br>
+Power: capture cards draw USB bus power — use a powered USB hub if running multiple USB devices on the same machine. Bus power starvation causes capture cards to drop frames or disconnect mid-show.
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══ SECTION 4: AUDIO ═══ -->
+<section class="section" id="audio">
+  <div class="section-tag">Audio</div>
+  <h2>Microphone Setup</h2>
+  <p class="section-sub">Audio is 50% of the experience — poor mic quality undermines a great visual</p>
+
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:var(--muted); letter-spacing:0.1em; margin-bottom:12px">RECOMMENDED MIC TYPES</div>
+
+    <div style="margin-bottom:14px">
+      <div class="rank-badge rank-best">BEST</div>
+      <div style="font-size:14px; font-weight:700; color:var(--white); margin-bottom:3px">Lavalier (lapel) wireless</div>
+      <div style="font-size:12px; color:var(--muted)">Clip to lapel, 6–8" below chin. Presenter can move freely. Requires bodypack transmitter + USB receiver into computer.</div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div class="rank-badge rank-good">GOOD</div>
+      <div style="font-size:14px; font-weight:700; color:var(--white); margin-bottom:3px">Headset / Boom mic</div>
+      <div style="font-size:12px; color:var(--muted)">Keeps consistent distance from mouth. Great for stationary presenters or hands-on demos.</div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div class="rank-badge rank-ok">OK</div>
+      <div style="font-size:14px; font-weight:700; color:var(--white); margin-bottom:3px">USB cardioid condenser (desktop)</div>
+      <div style="font-size:12px; color:var(--muted)">Place 12–18" from presenter. Directional. Keep away from HVAC vents and computer fans.</div>
+    </div>
+
+    <div>
+      <div class="rank-badge rank-avoid">AVOID</div>
+      <div style="font-size:14px; font-weight:700; color:var(--white); margin-bottom:3px">Built-in laptop microphone</div>
+      <div style="font-size:12px; color:var(--muted)">Captures room noise, keyboard clicks, fan noise. Unacceptable for live production.</div>
+    </div>
+  </div>
+
+  <div class="card card-accent">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:var(--teal); letter-spacing:0.1em; margin-bottom:10px">ZOOM AUDIO SETTINGS</div>
+    <ul class="checklist">
+      <li><div class="check-icon check-green">✓</div><div><div class="check-text-title">Suppress Background Noise → Disabled</div></div></li>
+      <li><div class="check-icon check-green">✓</div><div><div class="check-text-title">Echo Cancellation → Auto (leave on)</div></div></li>
+      <li><div class="check-icon check-green">✓</div><div><div class="check-text-title">High Fidelity Music Mode → OFF</div></div></li>
+      <li><div class="check-icon check-green">✓</div><div><div class="check-text-title">Stereo Audio → OFF (mono is fine)</div></div></li>
+      <li><div class="check-icon check-green">✓</div><div><div class="check-text-title">Input Level → peaks at –12 dBFS</div><div class="check-text-sub">Test level with production team the day before</div></div></li>
+    </ul>
+  </div>
+
+  <div class="notice notice-red" style="margin-top:14px">
+    <span class="notice-icon">🔴</span>
+    <div><strong>Critical — Audio Assignment:</strong> Only ONE computer at the remote location should transmit audio — the one connected to the presenter's mic. All other camera computers must be <strong>muted in Zoom</strong>. This prevents echo, phase issues, and duplicate audio at the mix position.</div>
+  </div>
+
+  <button class="expandable-toggle" onclick="toggle(this)">
+    <span><span class="expert-tag">TECH</span> XLR microphone → computer via audio interface</span>
+    <span class="toggle-arrow">▶</span>
+  </button>
+  <div class="expandable-content">
+    <div class="tech-callout">
+For professional wireless lav systems with XLR receiver output (Shure, Sennheiser, Audio-Technica), use a small USB audio interface to get the signal into the computer cleanly.<br><br>
+Recommended interfaces: Focusrite Scarlett Solo · MOTU M2 · Zoom H6 (interface mode)<br><br>
+Signal chain: Wireless receiver XLR out → Audio interface XLR in → USB to computer → select as mic input in Zoom<br><br>
+Gain staging: set the interface preamp gain so the Zoom input meter peaks around –12 dBFS during normal speech. Don't rely on Zoom's software input gain — set it correctly at the hardware preamp.<br><br>
+Phantom power: condenser mics require 48V phantom power from the interface. Dynamic mics and wireless receiver outputs do NOT need phantom power — enabling it on an XLR line-level source won't damage most gear, but turn it off to be safe.<br><br>
+Driver note: on Windows, install the ASIO driver for your interface for lowest latency. On Mac, Core Audio is used automatically — no driver needed for most interfaces.
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══ SECTION 5: MONITORING ═══ -->
+<section class="section" id="monitoring">
+  <div class="section-tag">Monitoring</div>
+  <h2>IFB & Stage Audio Return</h2>
+  <p class="section-sub">The remote presenter must hear the stage clearly — poor monitoring breaks conversation flow</p>
+
+  <div class="card">
+    <div class="step-row">
+      <div class="step-num">01</div>
+      <div>
+        <div class="step-title">Use a single earbud — not headphones</div>
+        <div class="step-desc">One ear open keeps the presenter aware of their local environment. A wired or wireless IEM earbud is fine. Avoid over-ear headphones that look unnatural on camera.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">02</div>
+      <div>
+        <div class="step-title">Audio feed source</div>
+        <div class="step-desc">The Zoom client on the audio computer outputs the stage mix through its audio output. Route this to the earbud via a headphone amp or directly from the 3.5mm jack.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">03</div>
+      <div>
+        <div class="step-title">Monitor volume discipline</div>
+        <div class="step-desc">Keep level conservative — just loud enough to hear clearly. Excessive volume bleeds into the mic and causes feedback or echo artifacts at the venue mix position.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">04</div>
+      <div>
+        <div class="step-title">Pre-show IFB check</div>
+        <div class="step-desc">Confirm the remote presenter can clearly hear: (1) the stage presenter speaking, and (2) audience reactions that cue them to when they're live. Do this before doors open.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-accent card-accent-amber" style="margin-top:12px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:var(--amber); letter-spacing:0.1em; margin-bottom:8px">LATENCY AWARENESS</div>
+    <p style="font-size:13px; color:var(--offwhite); line-height:1.5">Expect <strong>150–400ms round-trip latency</strong> via Zoom. Both presenters should be briefed before the conversation. Natural 1–2 second pauses prevent cross-talk confusion. Think of it like a satellite phone call.</p>
+  </div>
+
+  <div class="card" style="margin-top:12px; background:rgba(0,180,216,0.05); border-color:var(--teal)">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:var(--teal); letter-spacing:0.1em; margin-bottom:8px">STAGE → REMOTE SIGNAL FLOW</div>
+    <div style="font-size:12px; color:var(--offwhite); line-height:2">
+      Stage mic → FOH mix &nbsp;→<br>
+      FOH mix → Zoom audio input &nbsp;→<br>
+      Zoom sends to remote client &nbsp;→<br>
+      Remote audio output → earbud
+    </div>
+  </div>
+
+  <button class="expandable-toggle" onclick="toggle(this)" style="margin-top:12px">
+    <span><span class="expert-tag">VISUAL</span> IFB signal path — what the presenter hears</span>
+    <span class="toggle-arrow">▶</span>
+  </button>
+  <div class="expandable-content">
+    <svg viewBox="0 0 320 190" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:320px;display:block;margin:8px auto;font-family:'IBM Plex Mono',monospace;">
+      <defs>
+        <marker id="ifbarr" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L0,7 L7,3.5 z" fill="#00B4D8"/></marker>
+      </defs>
+      <rect width="320" height="190" rx="8" fill="#18160C" stroke="#363318"/>
+      <text x="160" y="15" text-anchor="middle" fill="#B8AD8A" font-size="9" letter-spacing="1">IFB — PRESENTER HEARS THE STAGE</text>
+
+      <!-- VENUE side -->
+      <rect x="8" y="24" width="90" height="16" rx="3" fill="#1a1000" stroke="#F0A500" stroke-width="1"/>
+      <text x="53" y="35" text-anchor="middle" fill="#F0A500" font-size="7" font-weight="bold">VENUE</text>
+
+      <rect x="8" y="45" width="90" height="32" rx="4" fill="#1a1000" stroke="#F0A500" stroke-width="1.5"/>
+      <text x="53" y="59" text-anchor="middle" fill="#F0EAD6" font-size="9" font-weight="bold">FOH Console</text>
+      <text x="53" y="70" text-anchor="middle" fill="#B8AD8A" font-size="7">program mix out</text>
+
+      <rect x="8" y="88" width="90" height="26" rx="4" fill="#1a1000" stroke="#F0A500" stroke-width="1"/>
+      <text x="53" y="100" text-anchor="middle" fill="#F0EAD6" font-size="8">Show Computer</text>
+      <text x="53" y="110" text-anchor="middle" fill="#B8AD8A" font-size="7">Zoom → STAGE-AUDIO</text>
+      <line x1="53" y1="77" x2="53" y2="88" stroke="#F0A500" stroke-width="1.5" marker-end="url(#ifbarr)"/>
+
+      <!-- Zoom cloud -->
+      <ellipse cx="160" cy="95" rx="28" ry="22" fill="#0a0a18" stroke="#363318" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="160" y="93" text-anchor="middle" fill="#B8AD8A" font-size="8">Zoom</text>
+      <text x="160" y="105" text-anchor="middle" fill="#363318" font-size="7">cloud</text>
+      <line x1="98" y1="101" x2="132" y2="101" stroke="#00B4D8" stroke-width="1.5" marker-end="url(#ifbarr)"/>
+
+      <!-- REMOTE side -->
+      <rect x="222" y="24" width="90" height="16" rx="3" fill="#0a1a2a" stroke="#00B4D8" stroke-width="1"/>
+      <text x="267" y="35" text-anchor="middle" fill="#00B4D8" font-size="7" font-weight="bold">REMOTE</text>
+
+      <rect x="222" y="45" width="90" height="32" rx="4" fill="#0a1a2a" stroke="#00B4D8" stroke-width="1"/>
+      <text x="267" y="59" text-anchor="middle" fill="#F0EAD6" font-size="8">Audio Computer</text>
+      <text x="267" y="70" text-anchor="middle" fill="#B8AD8A" font-size="7">Zoom audio out → headphone jack</text>
+      <line x1="188" y1="95" x2="222" y2="70" stroke="#00B4D8" stroke-width="1.5" marker-end="url(#ifbarr)"/>
+
+      <!-- Headphone amp -->
+      <rect x="222" y="88" width="90" height="26" rx="4" fill="#0a1a2a" stroke="#00B4D8" stroke-width="1"/>
+      <text x="267" y="100" text-anchor="middle" fill="#F0EAD6" font-size="8">Headphone Amp</text>
+      <text x="267" y="110" text-anchor="middle" fill="#B8AD8A" font-size="7">(optional, or direct)</text>
+      <line x1="267" y1="77" x2="267" y2="88" stroke="#00B4D8" stroke-width="1.5" marker-end="url(#ifbarr)"/>
+
+      <!-- Earbud -->
+      <rect x="234" y="124" width="66" height="26" rx="12" fill="#1a2030" stroke="#00B4D8" stroke-width="2"/>
+      <text x="267" y="136" text-anchor="middle" fill="#F0EAD6" font-size="8" font-weight="bold">Earbud</text>
+      <text x="267" y="146" text-anchor="middle" fill="#00B4D8" font-size="7">single ear</text>
+      <line x1="267" y1="114" x2="267" y2="124" stroke="#00B4D8" stroke-width="1.5" marker-end="url(#ifbarr)"/>
+
+      <!-- What they hear -->
+      <rect x="8" y="130" width="200" height="52" rx="4" fill="#0E0D08" stroke="#363318"/>
+      <text x="108" y="144" text-anchor="middle" fill="#B8AD8A" font-size="8" font-weight="bold">PRESENTER HEARS:</text>
+      <text x="108" y="158" text-anchor="middle" fill="#3FB950" font-size="8">✓ Stage speakers (other presenters)</text>
+      <text x="108" y="170" text-anchor="middle" fill="#3FB950" font-size="8">✓ Audience Q&amp;A · Walk-in music</text>
+      <text x="108" y="180" text-anchor="middle" fill="#F85149" font-size="8">⚠ +150–500ms delay — brief them</text>
+    </svg>
+  </div>
+
+</section>
+
+<!-- ═══ SECTION 6: EYELINE ═══ -->
+<section class="section" id="eyeline">
+  <div class="section-tag">On-Camera Presence</div>
+  <h2>Eyeline & Framing</h2>
+  <p class="section-sub">Small adjustments create dramatically more engaging remote presence on a large LED wall</p>
+
+  <div class="two-col">
+    <div class="do-col">
+      <div class="col-header">✓ DO THIS</div>
+      <div class="col-body">
+        <div class="col-item">
+          <div class="col-item-title">Look at the camera lens</div>
+          <div class="col-item-desc">Tape a small arrow above the lens to remind you. Eye contact with the lens reads as eye contact to the audience.</div>
+        </div>
+        <div class="col-item">
+          <div class="col-item-title">Camera at eye level</div>
+          <div class="col-item-desc">Stack books or use a tripod. Camera below eye level looks up your nose. Above creates a submissive look.</div>
+        </div>
+        <div class="col-item">
+          <div class="col-item-title">18–24" from camera</div>
+          <div class="col-item-desc">Natural medium framing. Leave headroom above and keep eyes in the upper third of frame.</div>
+        </div>
+        <div class="col-item">
+          <div class="col-item-title">Stay on camera when listening</div>
+          <div class="col-item-desc">React naturally. Don't check notes or look away — you're still on screen.</div>
+        </div>
+        <div class="col-item">
+          <div class="col-item-title">Pause before speaking</div>
+          <div class="col-item-desc">Wait 1–2 seconds after the stage presenter finishes. Latency means responses can overlap if you start immediately.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dont-col">
+      <div class="col-header">✕ AVOID</div>
+      <div class="col-body">
+        <div class="col-item">
+          <div class="col-item-title">Reading notes off-screen</div>
+          <div class="col-item-desc">Eyes darting sideways looks disengaged on a 20-foot LED wall. Internalize key points.</div>
+        </div>
+        <div class="col-item">
+          <div class="col-item-title">Cluttered backgrounds</div>
+          <div class="col-item-desc">Clear the space behind you: no equipment piles, open doors, or moving people.</div>
+        </div>
+        <div class="col-item">
+          <div class="col-item-title">Excessive movement</div>
+          <div class="col-item-desc">Camera operators can't always follow sudden movement. Agree on a position and hold it.</div>
+        </div>
+        <div class="col-item">
+          <div class="col-item-title">Speaking before cued</div>
+          <div class="col-item-desc">Wait for a clear cue that you're live. Unintentional lead-ins will be heard at the venue before the presenter is ready.</div>
+        </div>
+        <div class="col-item">
+          <div class="col-item-title">Slouching or looking down</div>
+          <div class="col-item-desc">Poor posture looks disengaged on a large screen. Sit upright — the LED wall magnifies everything.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECTION 7: LIGHTING ═══ -->
+<section class="section" id="lighting">
+  <div class="section-tag">Lighting</div>
+  <h2>Lighting for Remote Locations</h2>
+  <p class="section-sub">Lighting is frequently the biggest differentiator between amateur and professional remote feeds</p>
+
+  <div class="three-col">
+    <div class="card card-accent card-accent-amber">
+      <div style="font-size:13px; font-weight:700; color:var(--amber); margin-bottom:8px">💡 Key Light</div>
+      <ul style="list-style:none">
+        <li style="font-size:12.5px; color:var(--offwhite); margin-bottom:8px; padding-left:12px; position:relative"><span style="position:absolute;left:0;color:var(--amber)">·</span>Place softbox or LED panel 45° to the side, slightly above eye level</li>
+        <li style="font-size:12.5px; color:var(--offwhite); margin-bottom:8px; padding-left:12px; position:relative"><span style="position:absolute;left:0;color:var(--amber)">·</span>Avoid light directly behind presenter — creates silhouette</li>
+        <li style="font-size:12.5px; color:var(--offwhite); margin-bottom:8px; padding-left:12px; position:relative"><span style="position:absolute;left:0;color:var(--amber)">·</span>Minimum 500 lux on presenter's face</li>
+        <li style="font-size:12.5px; color:var(--offwhite); margin-bottom:8px; padding-left:12px; position:relative"><span style="position:absolute;left:0;color:var(--amber)">·</span>Single color temperature: 5600K daylight preferred</li>
+        <li style="font-size:12.5px; color:var(--offwhite); padding-left:12px; position:relative"><span style="position:absolute;left:0;color:var(--amber)">·</span>Battery LED panels work well in field environments</li>
+      </ul>
+    </div>
+
+    <div class="card card-accent">
+      <div style="font-size:13px; font-weight:700; color:var(--teal); margin-bottom:8px">🎥 Environment</div>
+      <ul style="list-style:none">
+        <li style="font-size:12.5px; color:var(--offwhite); margin-bottom:8px; padding-left:12px; position:relative"><span style="position:absolute;left:0;color:var(--teal)">·</span>Balanced ambient background helps establish sense of place</li>
+        <li style="font-size:12.5px; color:var(--offwhite); margin-bottom:8px; padding-left:12px; position:relative"><span style="position:absolute;left:0;color:var(--teal)">·</span>Turn on all work lighting in labs — dark spaces look unimpressive</li>
+        <li style="font-size:12.5px; color:var(--offwhite); margin-bottom:8px; padding-left:12px; position:relative"><span style="position:absolute;left:0;color:var(--teal)">·</span>Avoid windows directly behind subject (exposure blow-out)</li>
+        <li style="font-size:12.5px; color:var(--offwhite); margin-bottom:8px; padding-left:12px; position:relative"><span style="position:absolute;left:0;color:var(--teal)">·</span>If windows visible, shoot with window to side, not behind</li>
+        <li style="font-size:12.5px; color:var(--offwhite); padding-left:12px; position:relative"><span style="position:absolute;left:0;color:var(--teal)">·</span>Even a simple floor lamp in background adds depth</li>
+      </ul>
+    </div>
+
+    <div class="card card-accent card-accent-red">
+      <div style="font-size:13px; font-weight:700; color:var(--red); margin-bottom:8px">⚠️ Avoid</div>
+      <ul style="list-style:none">
+        <li style="font-size:12.5px; color:var(--offwhite); margin-bottom:8px; padding-left:12px; position:relative"><span style="position:absolute;left:0;color:var(--red)">·</span>Overhead fluorescent only — creates raccoon-eye shadows</li>
+        <li style="font-size:12.5px; color:var(--offwhite); margin-bottom:8px; padding-left:12px; position:relative"><span style="position:absolute;left:0;color:var(--red)">·</span>Strong backlight from windows or LED screens behind presenter</li>
+        <li style="font-size:12.5px; color:var(--offwhite); margin-bottom:8px; padding-left:12px; position:relative"><span style="position:absolute;left:0;color:var(--red)">·</span>Fluorescent flicker — use 60Hz-matched ballasts or LED</li>
+        <li style="font-size:12.5px; color:var(--offwhite); margin-bottom:8px; padding-left:12px; position:relative"><span style="position:absolute;left:0;color:var(--red)">·</span>Changing light conditions mid-conversation</li>
+        <li style="font-size:12.5px; color:var(--offwhite); padding-left:12px; position:relative"><span style="position:absolute;left:0;color:var(--red)">·</span>Auto-exposure hunting from bright equipment in frame</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="notice notice-amber" style="margin-top:4px">
+    <span class="notice-icon">⚡</span>
+    <div><strong>Quick fix:</strong> No dedicated lights? Position the presenter facing a window during daylight hours for soft, natural fill. Avoid direct sunlight — it's too harsh.</div>
+  </div>
+</section>
+
+<!-- ═══ SECTION 8: ZOOM ISO ═══ -->
+<section class="section" id="zoom">
+  <div class="section-tag">Zoom ISO Workflow</div>
+  <h2>Meeting Structure & ISO</h2>
+  <p class="section-sub">Set up Zoom so the production team receives clean, individual feeds from the remote location</p>
+
+  <div class="card" style="margin-bottom:12px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:var(--muted); letter-spacing:0.1em; margin-bottom:10px">PARTICIPANT NAMING CONVENTION</div>
+
+    <div class="participant-row">
+      <div class="participant-badge" style="color:var(--teal); border-color:var(--teal); background:rgba(0,180,216,0.1)">REMOTE-CAM1-WIDE</div>
+      <div class="participant-desc">Wide/establishing — <strong>audio muted</strong></div>
+    </div>
+    <div class="participant-row">
+      <div class="participant-badge" style="color:var(--green); border-color:var(--green); background:rgba(63,185,80,0.1)">REMOTE-CAM2-MED</div>
+      <div class="participant-desc">Medium presenter — <strong style="color:var(--green)">MIC LIVE</strong></div>
+    </div>
+    <div class="participant-row">
+      <div class="participant-badge" style="color:var(--teal); border-color:var(--teal); background:rgba(0,180,216,0.1)">REMOTE-CAM3-INSERT</div>
+      <div class="participant-desc">Detail/insert — <strong>audio muted</strong></div>
+    </div>
+    <div class="participant-row">
+      <div class="participant-badge" style="color:var(--muted); border-color:var(--border); background:var(--mid)">REMOTE-CAM4-ENV</div>
+      <div class="participant-desc">Optional roving — <strong>audio muted</strong></div>
+    </div>
+    <div class="participant-row">
+      <div class="participant-badge" style="color:var(--amber); border-color:var(--amber); background:rgba(240,165,0,0.1)">STAGE-AUDIO</div>
+      <div class="participant-desc">FOH mix position feeding stage audio in</div>
+    </div>
+
+    <div style="margin-top:10px; font-size:12px; color:var(--teal); font-style:italic">Consistent naming makes ISO track identification instant in post.</div>
+  </div>
+
+  <div class="card card-accent" style="margin-bottom:12px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:var(--teal); letter-spacing:0.1em; margin-bottom:10px">ISO RECORDING (HOST SIDE)</div>
+    <ul class="checklist">
+      <li><div class="check-icon check-green">✓</div><div><div class="check-text-title">Enable "Record each participant separately" in Zoom settings</div></div></li>
+      <li><div class="check-icon check-green">✓</div><div><div class="check-text-title">Host requires Zoom Business/Enterprise for ISO recording</div></div></li>
+      <li><div class="check-icon check-green">✓</div><div><div class="check-text-title">Files labeled by participant display name — use naming convention above</div></div></li>
+      <li><div class="check-icon check-green">✓</div><div><div class="check-text-title">ISO tracks available ~30min after meeting ends in cloud recordings</div></div></li>
+    </ul>
+  </div>
+
+  <div class="card card-accent card-accent-amber">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:var(--amber); letter-spacing:0.1em; margin-bottom:10px">PRE-SHOW CHECKLIST</div>
+    <ul class="checklist">
+      <li><div class="check-icon check-amber" style="border-radius:3px; width:16px; height:16px; border:1px solid var(--amber); background:transparent; display:block"></div><div class="check-text-title">All remote computers joined and named correctly</div></li>
+      <li><div class="check-icon check-amber" style="border-radius:3px; width:16px; height:16px; border:1px solid var(--amber); background:transparent; display:block"></div><div class="check-text-title">Camera assignments confirmed with TD</div></li>
+      <li><div class="check-icon check-amber" style="border-radius:3px; width:16px; height:16px; border:1px solid var(--amber); background:transparent; display:block"></div><div class="check-text-title">Audio computer confirmed with mic check</div></li>
+      <li><div class="check-icon check-amber" style="border-radius:3px; width:16px; height:16px; border:1px solid var(--amber); background:transparent; display:block"></div><div class="check-text-title">IFB confirmed — remote presenter hears stage clearly</div></li>
+      <li><div class="check-icon check-amber" style="border-radius:3px; width:16px; height:16px; border:1px solid var(--amber); background:transparent; display:block"></div><div class="check-text-title">Latency test conversation completed</div></li>
+      <li><div class="check-icon check-amber" style="border-radius:3px; width:16px; height:16px; border:1px solid var(--amber); background:transparent; display:block"></div><div class="check-text-title">ISO recording enabled and tested</div></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══ SECTION 9: QUICK REF ═══ -->
+<section class="section" id="quickref">
+  <div class="section-tag">Quick Reference</div>
+  <h2>One-Page Field Guide</h2>
+  <p class="section-sub">The essentials at a glance — share this section with your local crew</p>
+
+  <div class="ref-grid">
+    <div class="ref-card">
+      <div class="ref-top-border" style="background:var(--teal)"></div>
+      <div class="ref-card-header">
+        <span class="ref-card-icon">🎥</span>
+        <span class="ref-card-title">Cameras</span>
+      </div>
+      <div class="ref-card-body">
+        <ul>
+          <li>CAM1: Wide — safety shot</li>
+          <li>CAM2: Medium — primary</li>
+          <li>CAM3: Detail/insert</li>
+          <li>Each cam = own computer</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-top-border" style="background:var(--teal-dim)"></div>
+      <div class="ref-card-header">
+        <span class="ref-card-icon">⚙️</span>
+        <span class="ref-card-title">Video Settings</span>
+      </div>
+      <div class="ref-card-body">
+        <ul>
+          <li>1080p HD, 30fps</li>
+          <li>No virtual backgrounds</li>
+          <li>No beauty filters</li>
+          <li>Wired ethernet only</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-top-border" style="background:var(--green)"></div>
+      <div class="ref-card-header">
+        <span class="ref-card-icon">🎙️</span>
+        <span class="ref-card-title">Audio</span>
+      </div>
+      <div class="ref-card-body">
+        <ul>
+          <li>Lavalier mic preferred</li>
+          <li>One mic computer only</li>
+          <li>All other cams = muted</li>
+          <li>Level to –12 dBFS</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-top-border" style="background:var(--amber)"></div>
+      <div class="ref-card-header">
+        <span class="ref-card-icon">🎧</span>
+        <span class="ref-card-title">Monitoring</span>
+      </div>
+      <div class="ref-card-body">
+        <ul>
+          <li>Single earbud, one ear open</li>
+          <li>Audio from Zoom output</li>
+          <li>Conservative volume</li>
+          <li>Confirm before doors open</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-top-border" style="background:var(--red)"></div>
+      <div class="ref-card-header">
+        <span class="ref-card-icon">👁️</span>
+        <span class="ref-card-title">Eyeline</span>
+      </div>
+      <div class="ref-card-body">
+        <ul>
+          <li>Camera at eye level</li>
+          <li>Look at lens, not screen</li>
+          <li>Eyes in upper third</li>
+          <li>Pause 1–2s before speaking</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-top-border" style="background:var(--muted)"></div>
+      <div class="ref-card-header">
+        <span class="ref-card-icon">💡</span>
+        <span class="ref-card-title">Lighting</span>
+      </div>
+      <div class="ref-card-body">
+        <ul>
+          <li>Key light 45° side, above eye</li>
+          <li>No light behind presenter</li>
+          <li>Turn on all room lighting</li>
+          <li>Face window if no lights</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Questions? Contact your production team before show day — not during.
+</footer>
+
+<script>
+  function toggle(btn) {
+    btn.classList.toggle('open');
+    btn.nextElementSibling.classList.toggle('open');
+  }
+
+  // Active nav highlighting on scroll
+  const sections = document.querySelectorAll('.section');
+  const pills = document.querySelectorAll('.nav-pill');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        pills.forEach(p => p.classList.remove('active'));
+        const active = document.querySelector(`.nav-pill[href="#${entry.target.id}"]`);
+        if (active) {
+          active.classList.add('active');
+          active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      }
+    });
+  }, { threshold: 0.4 });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
