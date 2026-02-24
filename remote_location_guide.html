@@ -854,60 +854,85 @@ VPN: if the presenter's computer has a VPN active, disable it for the duration o
     <span class="toggle-arrow">▶</span>
   </button>
   <div class="expandable-content">
-    <svg viewBox="0 0 320 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:320px;display:block;margin:8px auto;font-family:'IBM Plex Mono',monospace;">
-      <defs>
-        <marker id="carr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#B8AD8A"/></marker>
-      </defs>
-      <rect width="320" height="300" rx="8" fill="#18160C" stroke="#363318"/>
-      <text x="160" y="14" text-anchor="middle" fill="#B8AD8A" font-size="9" letter-spacing="1">CAMERA POSITIONS — TOP-DOWN</text>
+    <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:360px;display:block;margin:8px auto;font-family:'IBM Plex Mono',monospace;">
+  <defs>
+    <marker id="ca" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+      <path d="M0,0 L0,7 L7,3.5 z" fill="#B8AD8A"/>
+    </marker>
+  </defs>
+  <rect width="320" height="320" rx="8" fill="#0E0D08" stroke="#363318" stroke-width="1"/>
+  <text x="160" y="15" text-anchor="middle" fill="#B8AD8A" font-size="9" letter-spacing="2">CAMERA POSITIONS — TOP-DOWN VIEW</text>
 
-      <!-- Background / backdrop -->
-      <rect x="60" y="24" width="200" height="28" rx="3" fill="#1a1a10" stroke="#363318" stroke-width="1.5"/>
-      <text x="160" y="42" text-anchor="middle" fill="#363318" font-size="9">BACKGROUND / BACKDROP</text>
+  <!-- Room boundary -->
+  <rect x="16" y="24" width="288" height="222" rx="5" fill="#111108" stroke="#363318" stroke-width="1.5"/>
 
-      <!-- Presenter -->
-      <ellipse cx="160" cy="110" rx="18" ry="22" fill="#242110" stroke="#F0A500" stroke-width="2"/>
-      <text x="160" y="106" text-anchor="middle" fill="#F0EAD6" font-size="8" font-weight="bold">PRES</text>
-      <text x="160" y="118" text-anchor="middle" fill="#F0EAD6" font-size="7">presenter</text>
+  <!-- Background / backdrop at top of room -->
+  <rect x="30" y="32" width="260" height="24" rx="3" fill="#1a1a10" stroke="#363318" stroke-width="1"/>
+  <text x="160" y="48" text-anchor="middle" fill="#4a4a30" font-size="9" font-weight="bold" letter-spacing="1">BACKGROUND / BACKDROP</text>
 
-      <!-- CAMERA 1: Wide — far back center -->
-      <rect x="136" y="218" width="48" height="28" rx="3" fill="#1a2030" stroke="#00B4D8" stroke-width="1.5"/>
-      <text x="160" y="230" text-anchor="middle" fill="#00B4D8" font-size="7" font-weight="bold">CAM 1</text>
-      <text x="160" y="241" text-anchor="middle" fill="#00B4D8" font-size="7">WIDE</text>
-      <!-- FOV cone -->
-      <path d="M160,218 L100,110 L220,110 Z" fill="rgba(0,180,216,0.06)" stroke="none"/>
-      <line x1="160" y1="218" x2="100" y2="132" stroke="#00B4D8" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.4"/>
-      <line x1="160" y1="218" x2="220" y2="132" stroke="#00B4D8" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.4"/>
-      <line x1="160" y1="218" x2="160" y2="132" stroke="#00B4D8" stroke-width="1" marker-end="url(#carr)"/>
+  <!-- Presenter — center of room -->
+  <circle cx="160" cy="138" r="20" fill="#242110" stroke="#F0A500" stroke-width="2"/>
+  <text x="160" y="134" text-anchor="middle" fill="#F0EAD6" font-size="9" font-weight="bold">PRES</text>
+  <text x="160" y="148" text-anchor="middle" fill="#B8AD8A" font-size="7">presenter</text>
 
-      <!-- CAMERA 2: Medium — center, closer -->
-      <rect x="136" y="175" width="48" height="28" rx="3" fill="#1a2030" stroke="#3FB950" stroke-width="1.5"/>
-      <text x="160" y="187" text-anchor="middle" fill="#3FB950" font-size="7" font-weight="bold">CAM 2</text>
-      <text x="160" y="198" text-anchor="middle" fill="#3FB950" font-size="7">MED + MIC</text>
-      <!-- Narrower FOV -->
-      <path d="M160,175 L130,110 L190,110 Z" fill="rgba(63,185,80,0.08)" stroke="none"/>
-      <line x1="160" y1="175" x2="160" y2="132" stroke="#3FB950" stroke-width="1" marker-end="url(#carr)"/>
+  <!-- CAM 1: WIDE — bottom center, furthest back -->
+  <rect x="120" y="210" width="80" height="30" rx="4" fill="#0a1a2a" stroke="#00B4D8" stroke-width="1.5"/>
+  <text x="160" y="222" text-anchor="middle" fill="#00B4D8" font-size="9" font-weight="bold">CAM 1</text>
+  <text x="160" y="234" text-anchor="middle" fill="#00B4D8" font-size="8">WIDE</text>
+  <!-- Wide FOV cone -->
+  <path d="M160,210 L100,158 L220,158" fill="rgba(0,180,216,0.06)" stroke="none"/>
+  <line x1="160" y1="210" x2="110" y2="162" stroke="#00B4D8" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.5"/>
+  <line x1="160" y1="210" x2="210" y2="162" stroke="#00B4D8" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.5"/>
+  <!-- aim line -->
+  <line x1="160" y1="210" x2="160" y2="160" stroke="#00B4D8" stroke-width="1.2" marker-end="url(#ca)"/>
 
-      <!-- CAMERA 3: Insert — tight, to one side -->
-      <rect x="226" y="120" width="50" height="28" rx="3" fill="#1a2030" stroke="#F0A500" stroke-width="1.5"/>
-      <text x="251" y="132" text-anchor="middle" fill="#F0A500" font-size="7" font-weight="bold">CAM 3</text>
-      <text x="251" y="143" text-anchor="middle" fill="#F0A500" font-size="7">INSERT</text>
-      <!-- Tight FOV toward presenter hands/desk -->
-      <line x1="226" y1="134" x2="185" y2="116" stroke="#F0A500" stroke-width="1" marker-end="url(#carr)"/>
-      <path d="M226,134 L185,108 L185,124 Z" fill="rgba(240,165,0,0.08)" stroke="none"/>
+  <!-- CAM 2: MED + MIC — bottom center, closer -->
+  <rect x="120" y="172" width="80" height="30" rx="4" fill="#0a1a10" stroke="#3FB950" stroke-width="2"/>
+  <text x="160" y="184" text-anchor="middle" fill="#3FB950" font-size="9" font-weight="bold">CAM 2</text>
+  <text x="160" y="196" text-anchor="middle" fill="#3FB950" font-size="8">MED · MIC LIVE</text>
+  <!-- Tighter FOV cone -->
+  <path d="M160,172 L132,158 L188,158" fill="rgba(63,185,80,0.07)" stroke="none"/>
+  <line x1="160" y1="172" x2="160" y2="160" stroke="#3FB950" stroke-width="1.2" marker-end="url(#ca)"/>
 
-      <!-- CAMERA 4: Environment — wide side angle -->
-      <rect x="42" y="80" width="50" height="28" rx="3" fill="#1a2030" stroke="#BC8CFF" stroke-width="1.5"/>
-      <text x="67" y="92" text-anchor="middle" fill="#BC8CFF" font-size="7" font-weight="bold">CAM 4</text>
-      <text x="67" y="103" text-anchor="middle" fill="#BC8CFF" font-size="7">ENV / ROOM</text>
-      <!-- Wide side angle -->
-      <line x1="92" y1="94" x2="142" y2="110" stroke="#BC8CFF" stroke-width="1" marker-end="url(#carr)"/>
+  <!-- CAM 3: INSERT — right side, tight angle on hands/podium -->
+  <rect x="244" y="118" width="60" height="30" rx="4" fill="#1a1200" stroke="#F0A500" stroke-width="1.5"/>
+  <text x="274" y="130" text-anchor="middle" fill="#F0A500" font-size="9" font-weight="bold">CAM 3</text>
+  <text x="274" y="142" text-anchor="middle" fill="#F0A500" font-size="8">INSERT</text>
+  <!-- tight aim toward presenter hands/lower body -->
+  <line x1="244" y1="138" x2="182" y2="148" stroke="#F0A500" stroke-width="1.2" marker-end="url(#ca)"/>
+  <path d="M244,138 L182,138 L182,158" fill="rgba(240,165,0,0.05)" stroke="none"/>
 
-      <!-- Each cam = one computer label -->
-      <rect x="8" y="254" width="304" height="38" rx="4" fill="#0E0D08" stroke="#363318"/>
-      <text x="160" y="268" text-anchor="middle" fill="#B8AD8A" font-size="8" font-weight="bold">EACH CAMERA = ONE DEDICATED COMPUTER + ONE ZOOM ACCOUNT</text>
-      <text x="160" y="282" text-anchor="middle" fill="#00B4D8" font-size="8">CAM 1 (muted) · CAM 2 (mic live) · CAM 3 (muted) · CAM 4 (muted)</text>
-    </svg>
+  <!-- CAM 4: ENV — left side, wide environmental -->
+  <rect x="16" y="78" width="66" height="30" rx="4" fill="#1a102a" stroke="#BC8CFF" stroke-width="1.5"/>
+  <text x="49" y="90" text-anchor="middle" fill="#BC8CFF" font-size="9" font-weight="bold">CAM 4</text>
+  <text x="49" y="102" text-anchor="middle" fill="#BC8CFF" font-size="8">ENV / ROOM</text>
+  <!-- Wide angle sweep across room -->
+  <line x1="82" y1="93" x2="142" y2="130" stroke="#BC8CFF" stroke-width="1.2" marker-end="url(#ca)"/>
+  <path d="M82,93 L120,70 L160,100" fill="rgba(188,140,255,0.05)" stroke="none"/>
+
+  <!-- Legend / key -->
+  <rect x="16" y="254" width="288" height="58" rx="4" fill="#0a0a08" stroke="#363318"/>
+  <text x="160" y="268" text-anchor="middle" fill="#B8AD8A" font-size="8" font-weight="bold">EACH CAMERA = 1 COMPUTER + 1 ZOOM ACCOUNT</text>
+
+  <!-- color key row -->
+  <rect x="26"  y="276" width="26" height="12" rx="2" fill="#0a1a2a" stroke="#00B4D8" stroke-width="1"/>
+  <text x="39"  y="286" text-anchor="middle" fill="#00B4D8" font-size="7">CAM1</text>
+  <text x="57"  y="286" fill="#B8AD8A" font-size="7">muted</text>
+
+  <rect x="90"  y="276" width="26" height="12" rx="2" fill="#0a1a10" stroke="#3FB950" stroke-width="1.5"/>
+  <text x="103" y="286" text-anchor="middle" fill="#3FB950" font-size="7">CAM2</text>
+  <text x="121" y="286" fill="#3FB950" font-size="7">mic live</text>
+
+  <rect x="158" y="276" width="26" height="12" rx="2" fill="#1a1200" stroke="#F0A500" stroke-width="1"/>
+  <text x="171" y="286" text-anchor="middle" fill="#F0A500" font-size="7">CAM3</text>
+  <text x="189" y="286" fill="#B8AD8A" font-size="7">muted</text>
+
+  <rect x="226" y="276" width="26" height="12" rx="2" fill="#1a102a" stroke="#BC8CFF" stroke-width="1"/>
+  <text x="239" y="286" text-anchor="middle" fill="#BC8CFF" font-size="7">CAM4</text>
+  <text x="257" y="286" fill="#B8AD8A" font-size="7">muted</text>
+
+  <text x="160" y="305" text-anchor="middle" fill="#B8AD8A" font-size="7">Arrows show camera aim direction — not cable paths</text>
+</svg>
   </div>
 
 </section>
