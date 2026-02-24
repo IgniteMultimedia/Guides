@@ -1051,14 +1051,62 @@ Power: capture cards draw USB bus power — use a powered USB hub if running mul
   </div>
 
   <div class="card card-accent">
-    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:var(--teal); letter-spacing:0.1em; margin-bottom:10px">ZOOM AUDIO SETTINGS</div>
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:var(--teal); letter-spacing:0.1em; margin-bottom:10px">ZOOM AUDIO SETTINGS — ISO PRODUCTION</div>
     <ul class="checklist">
-      <li><div class="check-icon check-green">✓</div><div><div class="check-text-title">Suppress Background Noise → Disabled</div></div></li>
-      <li><div class="check-icon check-green">✓</div><div><div class="check-text-title">Echo Cancellation → Auto (leave on)</div></div></li>
-      <li><div class="check-icon check-green">✓</div><div><div class="check-text-title">High Fidelity Music Mode → OFF</div></div></li>
-      <li><div class="check-icon check-green">✓</div><div><div class="check-text-title">Stereo Audio → OFF (mono is fine)</div></div></li>
-      <li><div class="check-icon check-green">✓</div><div><div class="check-text-title">Input Level → peaks at –12 dBFS</div><div class="check-text-sub">Test level with production team the day before</div></div></li>
+      <li>
+        <div class="check-icon check-green">✓</div>
+        <div>
+          <div class="check-text-title">Original Sound → ON</div>
+          <div class="check-text-sub">Most important setting. Bypasses all of Zoom's audio processing — AGC, noise suppression, echo cancellation. Your hardware interface provides the signal; Zoom just passes it through. Find it in Zoom → Audio → Music and Professional Audio → "Show in-meeting option to enable Original Sound"  then enable it in the meeting itself from the top bar.</div>
+        </div>
+      </li>
+      <li>
+        <div class="check-icon check-green">✓</div>
+        <div>
+          <div class="check-text-title">High Fidelity Music Mode → ON</div>
+          <div class="check-text-sub">Increases Zoom's audio codec from ~32kbps to ~96kbps and disables the audio processing pipeline. Required for broadcast-quality ISO. Enable under Zoom → Audio → Music and Professional Audio.</div>
+        </div>
+      </li>
+      <li>
+        <div class="check-icon check-green">✓</div>
+        <div>
+          <div class="check-text-title">Echo Cancellation → OFF (not Auto)</div>
+          <div class="check-text-sub">Auto means Zoom decides when to apply it — unacceptable for production. Set to OFF explicitly. With Original Sound enabled this is overridden anyway, but set it manually as a safety net.</div>
+        </div>
+      </li>
+      <li>
+        <div class="check-icon check-green">✓</div>
+        <div>
+          <div class="check-text-title">Suppress Background Noise → None / Disabled</div>
+          <div class="check-text-sub">Zoom's noise suppression adds artifacts and latency. Your hardware chain handles noise — not Zoom.</div>
+        </div>
+      </li>
+      <li>
+        <div class="check-icon check-green">✓</div>
+        <div>
+          <div class="check-text-title">Automatic Gain Control (AGC) → OFF</div>
+          <div class="check-text-sub">AGC rides input gain automatically and will fight your hardware preamp setting. Causes pumping and level instability. Must be disabled when using an audio interface with fixed gain staging.</div>
+        </div>
+      </li>
+      <li>
+        <div class="check-icon check-green">✓</div>
+        <div>
+          <div class="check-text-title">Stereo Audio → OFF for speech, ON for stereo sources</div>
+          <div class="check-text-sub">A single lav mic is mono — stereo OFF. If using a stereo ambient mic or stereo playback source, enable it. Don't leave it ON by default — it doubles the audio data unnecessarily for mono sources.</div>
+        </div>
+      </li>
+      <li>
+        <div class="check-icon check-green">✓</div>
+        <div>
+          <div class="check-text-title">Input Level → peaks at −12 dBFS</div>
+          <div class="check-text-sub">Set at the hardware interface preamp — not Zoom's software gain slider. Verify with FOH the day before, not on show day.</div>
+        </div>
+      </li>
     </ul>
+  </div>
+  <div class="notice notice-teal" style="margin-top:12px">
+    <span class="notice-icon">🎛️</span>
+    <div><strong>Original Sound in-meeting:</strong> After joining the Zoom call, confirm the "Original Sound: On" button appears in the top-left of the Zoom window and is active. It resets between meetings — check it every show, not just in settings.</div>
   </div>
 
   <div class="notice notice-red" style="margin-top:14px">
